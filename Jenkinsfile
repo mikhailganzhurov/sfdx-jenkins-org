@@ -1,5 +1,5 @@
 #!groovy
-
+import groovy.json.Json.SlurperClassic
 node {
 
     def SF_CONSUMER_KEY=env.SF_CONSUMER_KEY
@@ -9,6 +9,11 @@ node {
     def TEST_LEVEL='RunLocalTests'
     def SF_INSTANCE_URL = env.SF_INSTANCE_URL ?: "https://test.salesforce.com"
 
+	println 'KEY IS'
+	println SF_CONSUMER_KEY
+	println SF_USERNAME
+	println SERVER_KEY_CREDENTIALS_ID
+	println SF_INSTANCE_URL
 
     def toolbelt = tool 'toolbelt'
 
@@ -18,7 +23,9 @@ node {
     // -------------------------------------------------------------------------
 
     stage('checkout source') {
+		println 'before checkout'
         checkout scm
+		println 'after checkout'
     }
 
 
@@ -35,10 +42,13 @@ node {
 		// -------------------------------------------------------------------------
 
 		stage('Authorize to Salesforce') {
+			println 'Authorize to Salesforce start'
 			rc = command "${toolbelt}/sfdx auth:jwt:grant --instanceurl ${SF_INSTANCE_URL} --clientid ${SF_CONSUMER_KEY} --jwtkeyfile ${server_key_file} --username ${SF_USERNAME} --setalias UAT"
+			println rc
 		    if (rc != 0) {
 			error 'Salesforce org authorization failed.'
 		    }
+			println 'Authorize to Salesforce finish'
 		}
 
 
@@ -47,10 +57,13 @@ node {
 		// -------------------------------------------------------------------------
 
 		stage('Deploy and Run Tests') {
+			println 'Deploy and Run Tests start'
 		    rc = command "${toolbelt}/sfdx force:mdapi:deploy --wait 10 --deploydir ${DEPLOYDIR} --targetusername UAT --testlevel ${TEST_LEVEL}"
+			println rc
 		    if (rc != 0) {
 			error 'Salesforce deploy and test run failed.'
 		    }
+			println 'Deploy and Run Tests finish'
 		}
 
 
