@@ -43,7 +43,7 @@ node {
 
 			stage('Authorize to Salesforce') {
 				println 'Authorize to Salesforce start'
-				rc = command '${toolbelt}/sfdx auth:jwt:grant --instanceurl ${SF_INSTANCE_URL} --clientid ${SF_CONSUMER_KEY} --jwtkeyfile ${server_key_file} --username ${SF_USERNAME} --setalias DevOrg'
+				rc = command "${toolbelt}/sfdx auth:jwt:grant --instanceurl ${SF_INSTANCE_URL} --clientid ${SF_CONSUMER_KEY} --jwtkeyfile ${server_key_file} --username ${SF_USERNAME} --setalias DevOrg"
 				if (rc != 0) {
 				error 'Salesforce org authorization failed.'
 				}
@@ -57,7 +57,7 @@ node {
 
 			stage('Deploy and Run Tests') {
 				println 'Deploy and Run Tests start'
-				rc = command '${toolbelt}/sfdx force:mdapi:deploy --wait 10 --deploydir ${DEPLOYDIR} --targetusername DevOrg --testlevel ${TEST_LEVEL}'
+				rc = command "${toolbelt}/sfdx force:mdapi:deploy --wait 10 --deploydir ${DEPLOYDIR} --targetusername DevOrg --testlevel ${TEST_LEVEL}"
 				if (rc != 0) {
 				error 'Salesforce deploy and test run failed.'
 				}
